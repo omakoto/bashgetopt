@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Sample for bashgetopt.
+#
+# Run "pg -h" or "pg --h" to show help.
+# Run "pg -i" or "pg --ignore case" to see $ignorecase turns 1.
+# -C takes an integer argument.
+# -e takes a string argument.
+
+
+context=0
+ignorecase=0
+pattern=""
+files=""
+quiet=0
+
+eval "$(bashgetopt -d "Poor grep" '
+i|ignroe-case    ignorecase=1    # ignore case distinctions
+C|conext=i       context=%       # print NUM lines of context
+e|regexp=s       pattern=%       # use PATTERN for matching
+q                quiet=1         # don'\''t print matching lines. (<- this is how to put single quotes)
+' "$@")"
+
+if [[ -z "$pattern" ]] ; then
+    pattern="$1"
+    shift
+fi
+
+echo "ignorecase: $ignorecase"
+echo "context: $context"
+echo "pattern: $pattern"
+echo "files: $*"
+
+# TODO now implement grep...
