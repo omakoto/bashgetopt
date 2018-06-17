@@ -13,7 +13,10 @@ import (
 	"strings"
 )
 
-const bashCompletionFlag = "bash-completion"
+const (
+	bashCompletionFlag            = "bash-completion"
+	realBashCompletionCommandFlag = "bash-completion-command"
+)
 
 var (
 	description  = getopt.StringLong("description", 'd', "", "Specify the command description")
@@ -21,6 +24,8 @@ var (
 	_            = getopt.BoolLong("allow-files", 'F', "Build command completion that allows files")
 	noAllowFiles = getopt.BoolLong("no-allow-files", 'N', "Build command completion that doesn't allow files")
 	_            = getopt.BoolLong("", 'x', "(Unused, kept for backward compatibility)")
+
+	bashCompletionCommand = getopt.StringLong(realBashCompletionCommandFlag, 0, "")
 
 	dump = os.Getenv("BASHGETOPT_DUMP") == "1"
 )
@@ -59,11 +64,17 @@ func realMain() int {
 		return 1
 	}
 
-	spec, err := ParseOptionSpec(getopt.Args()[0])
+	specArg := getopt.Args()[0]
+	spec, err := ParseOptionSpec(specArg)
 	if err != nil {
 		common.Warn(err.Error())
 		printExit(1)
 		return 1
+	}
+
+	if *bashCompletionCommand != "" {
+		printRealBashcomp(spec, *bashCompletionCommand)
+		return 0
 	}
 
 	// Build getopt options.
@@ -96,7 +107,7 @@ func realMain() int {
 	}
 
 	if doBashComplete {
-		printBashcomp(spec)
+		printBashcomp(specArg)
 		printExit(0)
 		return 0
 	}
@@ -196,7 +207,14 @@ echo "  Usage:"
 	print("echo ", shell.Escape(b.String()), "\n")
 }
 
-func printBashcomp(spec []*OptionSpec) {
+func printBashcomp(specArg string) {
+	printf(
+		`%s --`+realBashCompletionCommandFlag+` "$_go_command" %s`,
+		shell.Escape(common.MustGetExecutable()),
+		shell.Escape(specArg))
+}
+
+func printRealBashcomp(spec []*OptionSpec, command string) {
 	// Create completion spec.
 	specStr := bytes.Buffer{}
 	specStr.WriteString("@switchloop \"^-\"\n")
@@ -218,13 +236,9 @@ func printBashcomp(spec []*OptionSpec) {
 
 	all := bytes.Buffer{}
 
-	all.WriteString(`sed -e "s/__BASHCOMP_COMMAND__/$_go_command/g" <<'__BASHGETOPT_EOF__'` + "\n")
-
 	opts := compmain.InstallOptions{In: os.Stdin, Out: &all}
 
-	// Note: compromsise special case @"..." and treat it as a raw string.
-	compmain.PrintInstallScriptRaw(specStr.String(), opts, `@"__BASHCOMP_COMMAND__"`)
-	all.WriteString(`__BASHGETOPT_EOF__` + "\n")
+	compmain.PrintInstallScriptRaw(specStr.String(), opts, command)
 
 	print(all.String())
 }
