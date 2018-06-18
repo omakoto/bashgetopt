@@ -208,9 +208,14 @@ echo "  Usage:"
 }
 
 func printBashcomp(specArg string) {
+	dashN := ""
+	if *noAllowFiles {
+		dashN = "-N"
+	}
 	printf(
-		`%s --`+realBashCompletionCommandFlag+` "$_go_command" %s`,
+		`%s %s --`+realBashCompletionCommandFlag+` "$_go_command" %s`,
 		shell.Escape(common.MustGetExecutable()),
+		dashN,
 		shell.Escape(specArg))
 }
 
