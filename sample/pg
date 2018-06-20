@@ -2,10 +2,12 @@
 
 # Sample for bashgetopt.
 #
-# Run "pg -h" or "pg --h" to show help.
-# Run "pg -i" or "pg --ignore case" to see $ignorecase turns 1.
+# Run "pg -h" or "pg --help" to show help.
+# Run "pg -i" or "pg --ignore-case" to see $ignorecase turns 1.
 # -C takes an integer argument.
 # -e takes a string argument.
+#
+# Run ". <(pg --bash-completion)" to install bash completion.
 
 
 context=0
