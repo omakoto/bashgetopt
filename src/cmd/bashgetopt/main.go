@@ -21,7 +21,7 @@ const (
 var (
 	description  = getopt.StringLong("description", 'd', "", "Specify the command description")
 	usage        = getopt.StringLong("usage", 'u', "", "Specify function name that prints usage")
-	_            = getopt.BoolLong("allow-files", 'F', "Build command completion that allows files")
+	_            = getopt.BoolLong("allow-files", 'F', "Build command completion that allows files (default)")
 	noAllowFiles = getopt.BoolLong("no-allow-files", 'N', "Build command completion that doesn't allow files")
 	_            = getopt.BoolLong("", 'x', "(Unused, kept for backward compatibility)")
 
@@ -208,6 +208,13 @@ echo "  Usage:"
 }
 
 func printBashcomp(specArg string) {
+	// Here, we want to show the script to install completion.
+	// To do so, we need to know the command name, but we don't know that in the Go side.
+	// We just know it in the Bash side as "$_go_command".
+	// So, here, we print a command to invoke itself with
+	// --bash-completion-command $_go_command.
+	// When bashgetopt detects this flag, it then actually print the completion script.
+
 	dashN := ""
 	if *noAllowFiles {
 		dashN = "-N"
