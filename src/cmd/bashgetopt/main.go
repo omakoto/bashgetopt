@@ -234,11 +234,23 @@ func printRealBashcomp(spec []*OptionSpec, command string) {
 		if f.longOption == bashCompletionFlag {
 			continue
 		}
+
+		addArg := func() {
+			switch f.argType {
+			case types.IsInteger:
+				specStr.WriteString(fmt.Sprintf("      @any # [INTEGER] %s\n", f.help))
+			case types.IsString:
+				specStr.WriteString(fmt.Sprintf("      @any # [STRING] %s\n", f.help))
+			}
+		}
+
 		if f.shortOption != 0 {
 			specStr.WriteString(fmt.Sprintf("    -%c # %s\n", f.shortOption, f.help))
+			addArg()
 		}
 		if f.longOption != "" {
 			specStr.WriteString(fmt.Sprintf("    --%s # %s\n", f.longOption, f.help))
+			addArg()
 		}
 	}
 	if !*noAllowFiles {
