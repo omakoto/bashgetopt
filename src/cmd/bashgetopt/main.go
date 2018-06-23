@@ -131,13 +131,13 @@ func realMain() int {
 		switch f.argType {
 		case types.IsBoolean:
 			if f.boolValue {
-				printf("# Short:%c  Long:%q\n", f.shortOption, f.longOption)
+				//printf("# Short:%c  Long:%q\n", f.shortOption, f.longOption)
 				print(f.evalString, "\n")
 			}
 
 		case types.IsInteger, types.IsString:
 			if f.stringValue != "" {
-				printf("# Short:%c  Long:%q\n", f.shortOption, f.longOption)
+				//printf("# Short:%c  Long:%q\n", f.shortOption, f.longOption)
 				print(strings.Replace(f.evalString, "%", shell.Escape(f.stringValue), -1), "\n")
 			}
 		}
