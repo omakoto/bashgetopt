@@ -13,5 +13,5 @@ require (
 	github.com/mattn/go-isatty v0.0.9 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/ungerik/go-dry v0.0.0-20180411133923-654ae31114c8 // indirect
-	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
+	golang.org/x/sys v0.1.0 // indirect
 )
